@@ -14,4 +14,4 @@ class Passenger(models.Model):
 
 
 class User(AbstractUser):
-    passengers = models.ManyToManyField(Passenger, related_name='user')
+    passengers = models.ManyToManyField(Passenger, related_name='user', blank=True)

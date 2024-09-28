@@ -19,7 +19,7 @@ TrainTypes = [
 class Train(models.Model):
     number = models.IntegerField(unique=True)
     type = models.CharField(max_length=50, choices=TrainTypes)
-    cars = models.ManyToManyField('Car', related_name='train')
+    # cars = models.ManyToManyField('Car', related_name='train')
 
     def __str__(self):
         return f"Поезд {self.type} №{self.number}"
@@ -30,12 +30,13 @@ class Train(models.Model):
 
 
 class Car(models.Model):
+    train = models.ForeignKey(Train, on_delete=models.CASCADE, related_name='cars')
     number = models.IntegerField()
     type = models.CharField(max_length=50, choices=CarTypes)
     capacity = models.IntegerField()
 
     def __str__(self):
-        return f"Вагон {self.type} №{self.number}"
+        return f"Вагон {self.type} №{self.number} | {self.train}"
 
     class Meta:
         verbose_name = "Вагон"

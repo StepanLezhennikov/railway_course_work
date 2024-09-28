@@ -1,4 +1,5 @@
 from django.db import models
+from train.models import Train
 
 
 class Station(models.Model):
@@ -19,7 +20,9 @@ class Route(models.Model):
     to_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='to_route')
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
-
+    train = models.ForeignKey(Train, on_delete=models.CASCADE, related_name='routes')
+    # starting_price = models.DecimalField()
+    
     def __str__(self):
         return f'Маршрут {self.from_station.name} -> {self.to_station.name}'
 
@@ -29,6 +32,7 @@ class Route(models.Model):
 
 
 class Stop(models.Model):
+    stop_number = models.IntegerField(default=0, blank=True)
     route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name='stops')
     station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='stops')
     arrival_time = models.DateTimeField()
@@ -40,3 +44,7 @@ class Stop(models.Model):
     class Meta:
         verbose_name = "Остановка"
         verbose_name_plural = "Остановки"
+        constraints = [
+            models.UniqueConstraint(fields=['stop_number', 'route'], name='unique_stop_number_route')
+        ]
+
