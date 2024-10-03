@@ -14,12 +14,12 @@ class RouteAdmin(admin.ModelAdmin):
     inlines = [StopInline]
     fieldsets = [
         ('Информация про поезд', {'fields': ('train',)}),
-        ('Информация про маршрут', {'fields': [('from_station', 'to_station'), ('departure_time', 'arrival_time')]}),
+        ('Информация про маршрут', {'fields': [('from_station', 'to_station'), ('departure_time', 'arrival_time'),
+                                               'starting_price']}),
     ]
     autocomplete_fields = ['from_station', 'to_station']
     list_display = ['rout', 'departure_time', 'arrival_time']
     list_filter = ['from_station', 'to_station']
-
     search_fields = ['from_station__name', 'to_station__name']
 
     def get_search_results(self, request, queryset, search_term):

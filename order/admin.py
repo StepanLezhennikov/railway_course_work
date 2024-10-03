@@ -7,7 +7,7 @@ from .models import Order
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    fields = ['user', 'passenger', 'route', 'seat', 'is_active']
+    fields = ['user', 'passenger', 'route', 'seat',  'is_active']
     list_display = ['passenger', 'route', 'seat', 'is_active']
     actions = ['set_active', 'set_inactive']
 
