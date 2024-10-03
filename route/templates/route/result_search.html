@@ -1,10 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<p>{{ routes }}</p>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+<style>
+    .route-card {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background-color: #fff;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+
+    .route-card:hover {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(-5px);
+        transition: all 0.3s ease-in-out;
+    }
+</style>
+
+{% block title %}
+    <title>Поиск</title>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Прогресс-бар в отдельной секции -->
+    <section class="progress-bar-section mb-5">
+        <div class="progress-bar bg-light">
+            <ul class="nav nav-tabs nav-justified">
+                <li class="nav-item">
+                    <p class="nav-link active text-primary border-bottom border-primary">Поезда</p>
+                </li>
+                <li class="nav-item">
+                    <p class="nav-link text-secondary border-bottom-0">Места</p>
+                </li>
+                <li class="nav-item">
+                    <p class="nav-link text-secondary border-bottom-0">Пассажиры</p>
+                </li>
+                <li class="nav-item">
+                    <p class="nav-link text-secondary border-bottom-0">Оплата</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Секция с карточками поездов -->
+    <section class="routes-section">
+        {% for route in routes %}
+        <div class="card mb-3 shadow-sm bg-white rounded border-0 route-card" style="border: 1px solid #ddd;">
+            <div class="row no-gutters align-items-center">
+
+                <!-- Левая часть - информация о маршруте -->
+                <div class="col-md-5 p-3 d-flex flex-column justify-content-center" style="background-color: #f9f9f9;">
+                    <h5 class="text-primary">{{ route.from_station.name }} - {{ route.to_station.name }}</h5>
+                    <p class="text-secondary mb-1">{{ route.departure_time|date:"H:i" }} - {{ route.arrival_time|date:"H:i" }} | {{ route.departure_time|duration:route.arrival_time }}</p>
+                    <p class="small text-muted">{{ route.departure_time|date:"d M Y" }} - {{ route.arrival_time|date:"d M Y" }}</p>
+                </div>
+
+                <!-- Центральная часть - информация о поезде и местах -->
+                <div class="col-md-4 text-center p-3 d-flex flex-column justify-content-center">
+                    <h6 class="text-primary font-weight-bold">Поезд: №{{ route.train.number }}</h6>
+                    <p class="text-success mb-0">Свободные места: <strong>{{ route.free_seats }}</strong></p>
+                </div>
+
+                <!-- Правая часть - цена и кнопка -->
+                <div class="col-md-3 text-center p-3 d-flex flex-column justify-content-center">
+                    <h4 class="text-primary mb-0">{{ route.price }} BYN</h4>
+                    <p class="small text-muted mb-2">от</p>
+                    <a href="#" class="btn btn-primary w-100 py-2">Далее</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+</div>
+{% endblock %}

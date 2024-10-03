@@ -13,3 +13,64 @@
   font-size: 1.5rem;
   color: #666;
 }
+/* Контейнер для прогресса */
+.progress {
+    display: flex;
+    align-items: center;
+}
+
+/* Этапы прогресса (точки) */
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.progress-step .progress-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ddd;
+    border: 2px solid #ddd;
+}
+
+.progress-step.completed .progress-dot {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.progress-step.active .progress-dot {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.progress-step .progress-label {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #555;
+}
+
+/* Линия между этапами */
+.progress-line {
+    width: 50px;
+    height: 4px;
+    background-color: #ddd;
+}
+
+.progress-line.completed {
+    background-color: #28a745;
+}
+.route-card {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: #fff;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.route-card:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    transition: all 0.3s ease-in-out;
+}
