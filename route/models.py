@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from train.models import Train
-from .validators import validate_first_letter_uppercase
+from .validators import validate_first_letter_uppercase, validate_date_more_than_now
 
 
 class Station(models.Model):
@@ -22,8 +22,8 @@ class Route(models.Model):
     from_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='from_route',
                                      verbose_name='Откуда')
     to_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='to_route', verbose_name='Куда')
-    departure_time = models.DateTimeField(verbose_name='Время отправления')
-    arrival_time = models.DateTimeField(verbose_name='Время прибытия')
+    departure_time = models.DateTimeField(validators=[validate_date_more_than_now], verbose_name='Время отправления')
+    arrival_time = models.DateTimeField(validators=[validate_date_more_than_now],  verbose_name='Время прибытия')
     train = models.ForeignKey(Train, on_delete=models.CASCADE, related_name='routes', verbose_name='Поезд')
     starting_price = models.DecimalField(decimal_places=2, max_digits=6, verbose_name='Начальная цена')
 

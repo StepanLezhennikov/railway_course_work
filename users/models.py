@@ -10,7 +10,7 @@ class Passenger(models.Model):
     is_child = models.BooleanField(default=False, verbose_name='Является ребенком')
 
     def __str__(self):
-        return f"{self.surname} {self.name} {self.fathername}"
+        return f"{self.second_name} {self.first_name} {self.fathername}"
 
 
 class User(AbstractUser):

@@ -1,3 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+def ticket_selection(request):
+    return render(request, 'train/ticket_selection.html')

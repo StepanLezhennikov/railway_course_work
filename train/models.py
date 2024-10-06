@@ -1,8 +1,8 @@
 from django.db import models
-from django.db.models import Q
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.db import connection
+
 
 CarTypes = [
     ("Плацкарт", "Плацкарт"),
@@ -18,7 +18,7 @@ TrainTypes = [
 
 
 class Train(models.Model):
-    number = models.IntegerField(unique=True, verbose_name='Номер поезда')
+    number = models.PositiveIntegerField(validators=[], unique=True, verbose_name='Номер поезда')
     type = models.CharField(max_length=50, choices=TrainTypes, verbose_name='Тип')
 
     def __str__(self):
@@ -55,7 +55,7 @@ class Train(models.Model):
 
 class Car(models.Model):
     train = models.ForeignKey(Train, on_delete=models.CASCADE, related_name='cars', verbose_name='Поезд')
-    number = models.IntegerField(verbose_name='Номер')
+    number = models.PositiveIntegerField(verbose_name='Номер')
     type = models.CharField(max_length=50, choices=CarTypes, verbose_name='Тип')
     capacity = models.IntegerField(verbose_name='Количество мест')
 
