@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'route',
     'train',
     'users',
+    'discount',
     'crispy_forms',
 ]
 
@@ -133,7 +134,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

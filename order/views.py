@@ -1,3 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+def busket(request):
+    return render(request, "order/busket.html")

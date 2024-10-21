@@ -1,8 +1,8 @@
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
 from django.db import connection
-
 
 CarTypes = [
     ("Плацкарт", "Плацкарт"),
@@ -10,16 +10,17 @@ CarTypes = [
     ("Сидячий", "Сидячий"),
 ]
 
-TrainTypes = [
-    ("Скоростной", "Скоростной"),
-    ("Междугородний", "Междугородний"),
-    ("Пригородный", "Пригородный"),
-]
+
+class TrainType(models.Model):
+    name = models.CharField(max_length=50, verbose_name="Тип поезда")
+
+    def __str__(self):
+        return self.name
 
 
 class Train(models.Model):
-    number = models.PositiveIntegerField(validators=[], unique=True, verbose_name='Номер поезда')
-    type = models.CharField(max_length=50, choices=TrainTypes, verbose_name='Тип')
+    number = models.PositiveIntegerField(unique=True, verbose_name='Номер поезда')
+    type = models.ForeignKey(TrainType, on_delete=models.CASCADE, verbose_name='Тип')
 
     def __str__(self):
         return f"Поезд {self.type} №{self.number}"
@@ -43,7 +44,6 @@ class Train(models.Model):
             cursor.execute(query, [self.pk, arrival_time, departure_time])
             routes = cursor.fetchall()
 
-        print(routes)
         if routes:
             return False, routes
         return True, routes
@@ -65,11 +65,19 @@ class Car(models.Model):
     class Meta:
         verbose_name = "Вагон"
         verbose_name_plural = "Вагоны"
+        unique_together = ('train', 'number')
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        for s in range(self.capacity):
-            Seat.objects.create(car=self, number=s + 1)
+
+@receiver(post_save, sender=Car)
+def create_seats(sender, instance, created, **kwargs):
+    if created:
+        for s in range(instance.capacity):
+            # Seat.objects.create(car=instance, number=s + 1)
+            with connection.cursor() as cursor:
+                query = """
+                        INSERT INTO train_seat(number, is_occupied, car_id) VALUES(%s, %s, %s);
+                        """
+                cursor.execute(query, [s + 1, False, instance.id])
 
 
 class Seat(models.Model):
@@ -89,7 +97,7 @@ class Seat(models.Model):
 def delete_cars_with_train(sender, instance, **kwargs):
     with connection.cursor() as cursor:
         cursor.execute("""
-                SELECT car_id FROM train_train_cars WHERE train_id = %s            
+                SELECT id FROM train_car WHERE train_id = %s            
         """, [instance.id])
         car_ids = cursor.fetchall()
         car_ids = [car_id[0] for car_id in car_ids]
@@ -100,7 +108,7 @@ def delete_cars_with_train(sender, instance, **kwargs):
                 WHERE car_id = %s   
                 """, [car_id])
 
-        cursor.execute("DELETE FROM train_train_cars WHERE train_id = %s", [instance.id])
+        # cursor.execute("DELETE FROM train_train_cars WHERE train_id = %s", [instance.id])
 
         for car_id in car_ids:
             cursor.execute("""

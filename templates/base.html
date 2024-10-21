@@ -19,14 +19,12 @@
     <div class="px-3 py-2 text-bg-dark border-bottom">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-between">
-                <!-- Logo and Company Name -->
                 <a href="/" class="d-flex align-items-center my-2 text-white text-decoration-none">
                     <img src="{% static 'images/logo.png' %}" width="56" height="56" class="me-2">
                     <p class="company-name mb-0">Railway Company</p>
                 </a>
 
-                <!-- Navigation Menu and Buttons (right-aligned) -->
-                <div class="d-flex align-items-center ms-auto"> <!-- 'ms-auto' to push items to the right -->
+                <div class="d-flex align-items-center ms-auto">
                     <ul class="nav me-3">
                         <li class="nav-item">
                             <a href="#" class="nav-link text-white text-center">
@@ -35,35 +33,33 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-white text-center">
+                            <a href="{% url 'busket' %}" class="nav-link text-white text-center">
                                 <img src="{% static 'images/header_icons/cart.png' %}" width="24" height="24" class="d-block mx-auto mb-1">
                                 Корзина
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-white text-center">
+                            <a href="{% url 'passengers' %}" class="nav-link text-white text-center">
                                 <img src="{% static 'images/header_icons/passenger.png' %}" width="24" height="24" class="d-block mx-auto mb-1">
                                 Пассажиры
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-white text-center">
+                            <a href="{% url 'discounts' %}" class="nav-link text-white text-center">
                                 <img src="{% static 'images/header_icons/discount.png' %}" width="24" height="24" class="d-block mx-auto mb-1">
                                 Акции
                             </a>
                         </li>
                     </ul>
 
-                    <!-- Buttons for Login and Signup -->
-                    <div class="d-flex align-items-center">
-                        <button type="button" class="btn btn-light text-dark me-2 px-3">Login</button>
-                        <button type="button" class="btn btn-primary me-3 px-3">Sign-up</button>
+                    <div class="d-flex align-items-center text-white">
+                        {% if user.is_authenticated %}
+                            <span class="user-name me-2">{{ user.username }}</span>
+                        {% endif %}
+                        <a href="{% url 'login' %}">
+                            <img src="{% static 'images/profile.png' %}" width="48" height="48" class="rounded-circle">
+                        </a>
                     </div>
-
-                    <!-- Profile Icon -->
-                    <a href="#" class="text-white">
-                        <img src="{% static 'images/profile.png' %}" width="32" height="32">
-                    </a>
                 </div>
             </div>
         </div>
@@ -106,6 +102,21 @@
     .text-end {
         margin-left: auto;
     }
+
+    .user-name {
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 48px; /* Align username vertically with the profile icon */
+    }
+
+    .user-name:hover {
+        color: #cccccc; /* Add hover effect */
+    }
+
+    .rounded-circle {
+        border-radius: 50%;
+        background-color: #007bff;
+    }
 </style>
 
 </body>
@@ -126,9 +137,9 @@
         </div>
 
         <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="{% static 'images/social/telegram.png' %}" width="32" height="32"></a></li>
-            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="{% static 'images/social/instagram.png' %}" width="32" height="32"></a></li>
-            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="{% static 'images/social/linkedIn.png' %}" width="32" height="32"></a></li>
+            <li class="ms-3"><a class="text-body-secondary" href="https://t.me/lezhennikoff"><img src="{% static 'images/social/telegram.png' %}" width="32" height="32"></a></li>
+            <li class="ms-3"><a class="text-body-secondary" href="https://www.instagram.com/lezhennikoff_?igsh=c3c5bDM0Ynl2eWY0&utm_source=qr"><img src="{% static 'images/social/instagram.png' %}" width="32" height="32"></a></li>
+            <li class="ms-3"><a class="text-body-secondary" href="www.linkedin.com/in/stepan-lezhennikov-850ba4329"><img src="{% static 'images/social/linkedIn.png' %}" width="32" height="32"></a></li>
         </ul>
     </footer>
 </div>

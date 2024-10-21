@@ -1,25 +1,80 @@
 {% extends 'base.html' %}
-{% load custom_filters %}
+{% load custom_filters_route %}
 
-<style>
-    .route-card {
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-        background-color: #fff;
-        padding: 10px;
-        margin-bottom: 20px;
-    }
-
-    .route-card:hover {
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-        transform: translateY(-5px);
-        transition: all 0.3s ease-in-out;
-    }
-</style>
-
-{% block title %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Поиск</title>
-{% endblock %}
+    <style>
+        /* Основной стиль для карточки маршрута */
+        .route-card {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Эффект при наведении на карточку */
+        .route-card:hover {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+        /* Секция прогресс-бара */
+        .progress-bar-section {
+            margin-bottom: 20px;
+        }
+
+        /* Стили для прогресс-бара */
+        .progress-bar {
+            background-color: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        /* Активная вкладка в прогресс-баре */
+        .nav-link.active {
+            color: #007bff !important;
+            border-bottom: 3px solid #007bff !important;
+        }
+
+        /* Обычные вкладки */
+        .nav-link {
+            color: #6c757d !important;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+        }
+
+        /* Дополнительные стили для текста и кнопок */
+        .text-primary {
+            color: #007bff !important;
+        }
+
+        .text-secondary {
+            color: #6c757d !important;
+        }
+
+        .text-success {
+            color: #28a745 !important;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+    </style>
+</head>
+<body>
 
 {% block content %}
 <div class="container py-4">
@@ -45,12 +100,12 @@
 
     <section class="routes-section">
         {% for route in routes %}
-        <div class="card mb-3 shadow-sm bg-white rounded border-0 route-card" style="border: 1px solid #ddd;">
+        <div class="card mb-3 route-card">
             <div class="row no-gutters align-items-center">
 
                 <div class="col-md-5 p-3 d-flex flex-column justify-content-center" style="background-color: #f9f9f9;">
                     <h5 class="text-primary">{{ route.from_station.name }} - {{ route.to_station.name }}</h5>
-                    <p class="text-secondary mb-1">{{ route.departure_time|date:"H:i" }} - {{ route.arrival_time|date:"H:i" }} |</p>
+                    <p class="text-secondary mb-1">{{ route.departure_time|date:"H:i" }} - {{ route.arrival_time|date:"H:i" }} | {{route.departure_time|duration:route.arrival_time}}</p>
                     <p class="small text-muted">{{ route.departure_time|date:"d M Y" }} - {{ route.arrival_time|date:"d M Y" }}</p>
                 </div>
 
@@ -60,9 +115,9 @@
                 </div>
 
                 <div class="col-md-3 text-center p-3 d-flex flex-column justify-content-center">
-                    <h4 class="text-primary mb-0">{{ route.price }} BYN</h4>
+                    <h4 class="text-primary mb-0">{{ route.starting_price }} BYN</h4>
                     <p class="small text-muted mb-2">от</p>
-                    <a href="{% url 'ticket_selection' %}" class="btn btn-primary w-100 py-2">Далее</a>
+                    <a href="{% url 'ticket_selection' route.train.id %}" class="btn btn-primary w-100 py-2">Далее</a>
                 </div>
             </div>
         </div>
@@ -70,3 +125,6 @@
     </section>
 </div>
 {% endblock %}
+
+</body>
+</html>
