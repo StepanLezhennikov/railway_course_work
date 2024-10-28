@@ -1,0 +1,37 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff; /* светлый голубой фон */
+    color: #333;
+}
+
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff; /* белый фон для контейнера */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #007acc; /* темно-голубой цвет заголовка */
+}
+
+h2 {
+    border-bottom: 2px solid #007acc;
+    padding-bottom: 5px;
+}
+
+.user-info, .orders, .discount-cards {
+    margin-bottom: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #007acc; /* темно-голубой цвет подвала */
+    color: white;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}

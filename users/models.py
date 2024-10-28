@@ -15,3 +15,4 @@ class Passenger(models.Model):
 
 class User(AbstractUser):
     passengers = models.ManyToManyField(Passenger, related_name='user', blank=True, verbose_name='Пассажиры')
+    phone_number = models.CharField(blank=True, max_length=15)

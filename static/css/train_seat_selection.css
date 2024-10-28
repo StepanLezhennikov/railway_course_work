@@ -1,0 +1,78 @@
+/* Контейнер для выбора вагонов */
+.wagon-selection-container {
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Стиль для карточек вагонов */
+.wagon-card {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 100%; /* Устанавливаем карточку на полную ширину внутри колонки */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.wagon-card:hover {
+    background-color: #e2e6ea;
+}
+
+/* Центровка деталей вагона */
+.wagon-details {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Места в вагоне */
+.d-flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.seat {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 3px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.seat.free {
+    background-color: #28a745;
+    color: white;
+}
+
+.seat.occupied {
+    background-color: #dc3545;
+    color: white;
+    cursor: not-allowed;
+}
+
+.seat.selected {
+    background-color: #ffc107;
+    color: black;
+}
+
+/* Центровка списка выбранных мест */
+.selected-seats {
+    text-align: center;
+}
+
+#confirm-selection {
+    margin: 0 auto;
+    display: block;
+}

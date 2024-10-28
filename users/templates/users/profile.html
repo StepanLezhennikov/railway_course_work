@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль пользователя</title>
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}"> <!-- Подключите свой CSS файл -->
+</head>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <h1>Добро пожаловать, {{ user.username }}!</h1>
+
+    <div class="user-info">
+        <h2>Информация о пользователе</h2>
+        <p><strong>Имя:</strong> {{ user.username }}</p>
+        <p><strong>Электронная почта:</strong> {{ user.email }}</p>
+        {% if user.phone_number %}
+            <p><strong>Телефон:</strong> {{ user.phone_number }}</p>
+        {% else %}
+            <p><strong>Телефон:</strong> <em>Не указан</em></p>
+            <form method="POST">
+                {% csrf_token %}
+                <label for="phone_number">Добавить номер телефона:</label>
+                <input type="text" id="phone_number" name="phone_number" required>
+                <button type="submit">Сохранить</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="orders">
+        <h2>Ваши заказы</h2>
+        {% if orders %}
+            <ul>
+                {% for order in orders %}
+                    <li>Заказ #{{ order.id }}: {{ order.date }} - {{ order.status }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>У вас нет заказов.</p>
+        {% endif %}
+    </div>
+
+    <div class="discount-cards">
+        <h2>Ваши скидочные карты</h2>
+        {% if discount_cards %}
+            <ul>
+                {% for card in discount_cards %}
+                    <li>Карта #{{ card.id }}: {{ card.discount }}% - {{ card.valid_until }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>У вас нет скидочных карт.</p>
+        {% endif %}
+    </div>
+    <div class="passengers">
+        <h2>Ваши пассажиры</h2>
+        {% if passengers %}
+            <ul>
+                {% for passenger in passengers %}
+                    <li>{{ passenger.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>У вас нет добавленных пассажиров.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block footer%}
+{% endblock %}

@@ -6,7 +6,7 @@ from users.models import User
 
 
 class DiscountCard(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь", related_name='discounts')
     amount_of_rides = models.IntegerField(blank=True, default=0, verbose_name="Количество поездок")
     discount = models.DecimalField(max_digits=5, decimal_places=2, validators=[between_0_and_1], verbose_name="Процент скидки")
     duration = models.DurationField(verbose_name="Время действия")
