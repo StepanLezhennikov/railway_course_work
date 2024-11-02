@@ -26,7 +26,6 @@ def station_autocomplete(request):
 
 
 def search(request):
-
     start_time = timezone.datetime.fromisoformat(request.POST.get('travel_date'))
     end_time = start_time + timedelta(days=1)
     from_station = request.POST.get('from_station')

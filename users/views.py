@@ -1,11 +1,13 @@
 from django.contrib.auth.views import LoginView
-from django.urls import reverse_lazy
+from django.http import HttpResponse
+from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
+import json
 from users.forms import RegistrationForm
+from users.models import Passenger
 
 
 class RegisterView(CreateView):
@@ -44,3 +46,37 @@ def profile(request):
         'passengers': passengers_all
     }
     return render(request, 'users/profile.html', context)
+
+
+@login_required(login_url="login")
+def add_passenger(request):
+    if request.method == "POST" and request.POST.get('first_name'):
+        if request.POST.get('selected_seats', '[]'):
+            selected_seats = json.loads(request.POST.get('selected_seats', '[]'))
+            request.session['selected_seats'] = selected_seats
+
+        first_name = request.POST.get('first_name')
+        second_name = request.POST.get('second_name')
+        fathername = request.POST.get('fathername')
+        passport_number = request.POST.get('passport_number')
+        is_child = request.POST.get('is_child') == "on"
+
+        passenger = Passenger.objects.create(
+            first_name=first_name,
+            second_name=second_name,
+            fathername=fathername,
+            passport_number=passport_number,
+            is_child=is_child
+        )
+
+        request.user.passengers.add(passenger)
+        selected_passengers = request.session.get('selected_passengers', [])
+        selected_passengers.append(passenger.id)
+        request.session['selected_passengers'] = selected_passengers
+        return redirect(reverse('passenger_add'))
+
+    if request.POST.get('selected_seats', '[]'):
+        selected_seats = json.loads(request.POST.get('selected_seats', '[]'))
+        request.session['selected_seats'] = selected_seats
+
+    return render(request, 'users/passenger_add.html', {'user': request.user})

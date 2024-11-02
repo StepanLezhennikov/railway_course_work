@@ -1,6 +1,7 @@
 from django.urls import path
-from order.views import busket
+from order.views import basket, finish_order
 
 urlpatterns = [
-    path('busket/', busket, name="busket"),
+    path('basket/', basket, name="basket"),
+    path('finish_order/', finish_order, name="finish_order"),
 ]

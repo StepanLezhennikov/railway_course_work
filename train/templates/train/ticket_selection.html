@@ -33,40 +33,44 @@
 
 <div class="wagon-selection-container">
     <h2>Выбор мест по вагонам</h2>
-    <div class="row">
-        {% for wagon in wagons %}
-            <div class="col-md-4">
-                <div class="wagon-card" onclick="toggleDetails(this)">
-                    <h3>Вагон №{{ wagon.number }}</h3>
-                    <p>Тип: {{ wagon.type }}</p>
-                    <p>Свободных мест: {{ wagon|free_seats_count }}</p>
-                    <div class="wagon-details" style="display: none;">
-                        <h5>Места:</h5>
-                        <div class="d-flex flex-wrap justify-content-center">
-                            {% for seat in wagon.seats.all %}
-                                <div class="seat {% if seat.is_occupied %}occupied{% else %}free{% endif %}"
-                                     data-seat-number="{{ seat.number }}"
-                                     data-wagon-number="{{ wagon.number }}"
-                                     onclick="selectSeat(event, this, {{ seat.is_occupied|yesno:'true,false' }})">
-                                    {{ seat.number }}
-                                </div>
-                            {% empty %}
-                                <p>Места не найдены</p>
-                            {% endfor %}
+    <form id="seat-selection-form" action="{% url 'passenger_add' %}" method="POST">
+        {% csrf_token %}
+        <div class="row">
+            {% for wagon in wagons %}
+                <div class="col-md-4">
+                    <div class="wagon-card" onclick="toggleDetails(this)">
+                        <h3>Вагон №{{ wagon.number }}</h3>
+                        <p>Тип: {{ wagon.type }}</p>
+                        <p>Свободных мест: {{ wagon|free_seats_count }}</p>
+                        <div class="wagon-details" style="display: none;">
+                            <h5>Места:</h5>
+                            <div class="d-flex flex-wrap justify-content-center">
+                                {% for seat in wagon.seats.all %}
+                                    <div class="seat {% if seat.is_occupied %}occupied{% else %}free{% endif %}"
+                                         data-seat-number="{{ seat.number }}"
+                                         data-wagon-number="{{ wagon.number }}"
+                                         onclick="selectSeat(event, this, {{ seat.is_occupied|yesno:'true,false' }})">
+                                        {{ seat.number }}
+                                    </div>
+                                {% empty %}
+                                    <p>Места не найдены</p>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
 
-    <div class="selected-seats mt-3">
-        <h3>Выбранные места:</h3>
-        <ul id="selected-seats-list"></ul>
-    </div>
+        <div class="selected-seats mt-3">
+            <h3>Выбранные места:</h3>
+            <ul id="selected-seats-list"></ul>
+        </div>
 
-    <button class="btn btn-primary mt-4" id="confirm-selection">Подтвердить выбор мест</button>
+        <input type="hidden" id="selected-seats-data" name="selected_seats">
+
+        <button type="submit" class="btn btn-primary mt-4" id="confirm-selection">Подтвердить выбор мест</button>
+    </form>
 </div>
 
 {% endblock %}
-

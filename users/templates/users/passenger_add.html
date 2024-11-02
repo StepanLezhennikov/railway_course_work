@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление пассажиров</title>
+    <link rel="stylesheet" href="{% static 'css/passengers_add.css' %}">
+    <script src="{% static 'js/passengers_add.js' %}"></script>
+</head>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Добавление пассажиров</h2>
+
+    <form action="{% url 'passenger_add' %}" method="POST" class="mb-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="first_name" class="form-label">Имя</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="second_name" class="form-label">Фамилия</label>
+            <input type="text" class="form-control" id="second_name" name="second_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="fathername" class="form-label">Отчество</label>
+            <input type="text" class="form-control" id="fathername" name="fathername">
+        </div>
+        <div class="mb-3">
+            <label for="passport_number" class="form-label">Номер паспорта</label>
+            <input type="text" class="form-control" id="passport_number" name="passport_number" required>
+        </div>
+        <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="is_child" name="is_child">
+            <label class="form-check-label" for="is_child">Является ребенком</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить пассажира</button>
+        <input type="hidden" id="selected-seats-data" name="selected_seats">
+    </form>
+
+    {% if messages %}
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+    <h3>Ваши пассажиры</h3>
+    <form action="{% url 'finish_order' %}" method="POST">
+        {% csrf_token %}
+        <div class="list-group">
+            {% for passenger in user.passengers.all %}
+            <div class="list-group-item">
+                <input type="checkbox" id="passenger_{{ passenger.id }}" name="selected_passengers_{{passenger.id}}" value="{{ passenger.id }}"
+                       {% if passenger.id|stringformat:"s" in request.session.selected_passengers|stringformat:"s" %}checked{% endif %}>
+                <label for="passenger_{{ passenger.id }}">
+                    {{ passenger.first_name }} {{ passenger.second_name }}
+                </label>
+                {% if passenger.is_child %}
+                <p class="text-muted">Ребенок</p>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p>У вас пока нет добавленных пассажиров.</p>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Оформить заказ</button>
+
+    </form>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('errorModal');
+    if (modal) {
+        modal.style.display = "block"; // Открываем окно, если оно существует
+
+        // Закрываем окно при клике за его пределами
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    }
+});
+
+function closeModal() {
+    document.getElementById('errorModal').style.display = 'none';
+}
+
+</script>
+{% endblock %}
