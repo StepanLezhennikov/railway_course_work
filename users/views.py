@@ -73,6 +73,7 @@ def add_passenger(request):
         selected_passengers = request.session.get('selected_passengers', [])
         selected_passengers.append(passenger.id)
         request.session['selected_passengers'] = selected_passengers
+
         return redirect(reverse('passenger_add'))
 
     if request.POST.get('selected_seats', '[]'):
