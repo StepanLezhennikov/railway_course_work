@@ -1,10 +1,66 @@
+{% extends 'base.html' %}
+{% load custom_filters_route %}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
+{% block title %}
 <head>
     <meta charset="UTF-8">
-    <title>Busket</title>
+    <title>Корзина</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+{% endblock %}
+
+{% block content %}
 <body>
-<h1>Корзина</h1>
+    <section class="container mt-5">
+        <h1 class="text-center mb-4">Корзина</h1>
+
+        {% for order in orders %}
+            <div class="card mb-3 shadow-sm route-card">
+                <div class="row no-gutters align-items-center">
+                    <!-- Маршрут поездки -->
+                    <div class="col-md-5 p-3 d-flex flex-column justify-content-center" style="background-color: #f9f9f9;">
+                        <h5 class="text-primary">{{ order.route.from_station.name }} - {{ order.route.to_station.name }}</h5>
+                        <p class="text-secondary mb-1">{{ order.route.departure_time|date:"H:i" }} - {{ order.route.arrival_time|date:"H:i" }} | {{ order.route.departure_time|duration:order.route.arrival_time }}</p>
+                        <p class="small text-muted">{{ order.route.departure_time|date:"d M Y" }} - {{ order.route.arrival_time|date:"d M Y" }}</p>
+                    </div>
+
+                    <!-- Информация о поезде и вагоне -->
+                    <div class="col-md-3 text-center p-3 d-flex flex-column justify-content-center">
+                        <h6 class="text-primary font-weight-bold">Поезд №{{ order.route.train.number }}</h6>
+                        <p class="text-success mb-0">Вагон: <strong>{{ order.seat.car.number }}</strong></p>
+                        <p class="text-success mb-0">Место: <strong>{{ order.seat.number }}</strong></p>
+                    </div>
+
+                    <!-- Цена билета -->
+                    <div class="col-md-4 text-center p-3 d-flex flex-column justify-content-between">
+                        <div>
+                            <h4 class="text-primary mb-1">{{ order.price }} BYN</h4>
+                            <p class="small text-muted">цена</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Информация о пассажире и кнопка возврата -->
+                <div class="row no-gutters align-items-center p-3">
+                    <div class="col text-muted">
+                        <p>Пассажир: <strong>{{ order.passenger }}</strong></p>
+                    </div>
+                    <div class="col-auto">
+                        <a href="{% url 'return_ticket' order.id %}?next=basket" class="btn btn-primary return-btn">Вернуть билет</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center">Ваша корзина пуста</p>
+        {% endfor %}
+
+        <div class="text-center mt-4">
+            <a href="{% url 'buy_tickets' %}" class="btn btn-primary purchase-btn">Купить билеты</a>
+        </div>
+    </section>
 </body>
+{% endblock %}
 </html>

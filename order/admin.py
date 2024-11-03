@@ -4,6 +4,8 @@ from django.core.checks import messages
 from train.models import Seat
 from .models import Order
 
+admin.site.site_title = "Админка"
+admin.site.index_title = "Админка"
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):

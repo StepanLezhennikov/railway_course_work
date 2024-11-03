@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.urls import reverse_lazy, reverse
@@ -6,6 +8,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import json
+
+from order.models import Order
 from users.forms import RegistrationForm
 from users.models import Passenger
 
@@ -28,7 +32,9 @@ def passengers(request):
 @login_required(login_url="login")
 def profile(request):
     user = request.user
-    orders = user.orders.all()
+    orders = Order.objects.filter(user=request.user, is_active=True,
+                                       route__arrival_time__gt=datetime.now()).select_related("route__train",
+                                                                                              "route__to_station")
     discount_cards = user.discounts.all()
     passengers_all = user.passengers.all()
 
@@ -79,5 +85,8 @@ def add_passenger(request):
     if request.POST.get('selected_seats', '[]'):
         selected_seats = json.loads(request.POST.get('selected_seats', '[]'))
         request.session['selected_seats'] = selected_seats
+    else:
+        messages.error(request, "Не выбраны места.")
+        redirect('ticket_selection')
 
     return render(request, 'users/passenger_add.html', {'user': request.user})

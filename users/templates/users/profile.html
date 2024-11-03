@@ -35,7 +35,7 @@
         {% if orders %}
             <ul>
                 {% for order in orders %}
-                    <li>Заказ #{{ order.id }}: {{ order.date }} - {{ order.status }}</li>
+                    <li>Заказ #{{ order.route}}: {{ order.date }} - {{ order.status }}</li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -60,7 +60,7 @@
         {% if passengers %}
             <ul>
                 {% for passenger in passengers %}
-                    <li>{{ passenger.name }}</li>
+                    <li>{{ passenger }}</li>
                 {% endfor %}
             </ul>
         {% else %}

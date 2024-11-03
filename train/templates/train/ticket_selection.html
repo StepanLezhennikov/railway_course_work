@@ -72,5 +72,19 @@
         <button type="submit" class="btn btn-primary mt-4" id="confirm-selection">Подтвердить выбор мест</button>
     </form>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("seat-selection-form");
+        const selectedSeatsData = document.getElementById("selected-seats-data");
+
+        form.addEventListener("submit", function(event) {
+            // Проверяем, выбраны ли места
+            if (!selectedSeatsData.value) {
+                event.preventDefault(); // Отмена отправки формы
+                alert("Пожалуйста, выберите места перед подтверждением!"); // Сообщение для пользователя
+            }
+        });
+    });
+</script>
 
 {% endblock %}
