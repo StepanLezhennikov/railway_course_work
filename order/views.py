@@ -1,11 +1,11 @@
 from datetime import datetime
 from typing import List
 from django.contrib import messages
-
+from .tasks import send_ticket_email
 from django.db import transaction
 from django.shortcuts import render, redirect
-import json
-
+from django.core.mail import send_mail
+from django.conf import settings
 from order.models import Order
 from route.models import Route
 from route.views import search
@@ -78,6 +78,23 @@ def return_ticket(request, order_id):
     return redirect(next_page)
 
 def buy_tickets(request):
-    orders = Order.objects.filter(user=request.user, is_active=False)
+    orders = Order.objects.filter(user=request.user, is_active=False).select_related('route', 'passenger', 'seat__car')
+
+    for order in orders:
+        departure_time = order.route.departure_time.strftime('%d.%m.%Y %H:%M')
+        arrival_time = order.route.arrival_time.strftime('%d.%m.%Y %H:%M')
+
+        order_info = f"""
+            Билет успешно куплен.
+            {order.route}
+            Время отправления: {departure_time}
+            Время прибытия: {arrival_time}
+
+            Пассажир: {order.passenger}
+            Вагон: {order.seat.car.number}
+            Место: {order.seat.number}
+            """
+
+        send_ticket_email.delay(request.user.email, order_info)
     orders.update(is_active=True)
     return redirect('home')

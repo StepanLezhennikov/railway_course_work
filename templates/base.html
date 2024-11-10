@@ -62,11 +62,17 @@
 
                     <div class="d-flex align-items-center text-white">
                         {% if user.is_authenticated %}
-                            <a href="{% url 'profile' %}" class="user-name me-2">{{ user.username }}</a>
+                            <a href="{% url 'profile' %}" class="user-name me-3">{{ user.username }}</a>
                         {% endif %}
                         <a href="{% url 'profile' %}">
-                            <img src="{% static 'images/profile.png' %}" width="48" height="48" class="rounded-circle">
+                            <img src="{% static 'images/profile.png' %}" width="48" height="48" class="rounded-circle ms-3">
                         </a>
+                        {% if user.is_authenticated %}
+                        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-light btn-logout ms-4">Выйти</button>
+                        </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -116,7 +122,7 @@
         font-weight: 500;
         line-height: 48px;
         text-decoration: none;
-        color: white;  /* Установите цвет текста на белый */
+        color: white;
     }
 
     .user-name:hover {
@@ -126,6 +132,24 @@
     .rounded-circle {
         border-radius: 50%;
         background-color: #007bff;
+    }
+
+    .btn-logout {
+        padding: 5px 20px;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #ffffff;
+        background-color: transparent;
+        border: 2px solid #ffffff;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        position: relative;
+        top: -5px; /* Поднимает кнопку немного выше */
+    }
+
+    .btn-logout:hover {
+        background-color: #ffffff;
+        color: #333;
     }
 </style>
 

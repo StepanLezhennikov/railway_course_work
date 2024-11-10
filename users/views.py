@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView

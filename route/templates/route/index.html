@@ -62,34 +62,35 @@
 
 <script>
     $(document).ready(function() {
-        $('#from_station').autocomplete({
-            source: '{% url "station_autocomplete" %}',
-            minLength: 2
-        });
-
-        $('#to_station').autocomplete({
-            source: '{% url "station_autocomplete" %}',
-            minLength: 2
-        });
-
-        $('#calendar-addon').click(function() {
-            $('#travel_date').click();
-        });
-
-        // Проверка формы перед отправкой
-        $('form').on('submit', function(event) {
-            // Получаем значения полей
-            var fromStation = $('#from_station').val().trim();
-            var toStation = $('#to_station').val().trim();
-            var travelDate = $('#travel_date').val().trim();
-
-            // Проверяем, заполнены ли все поля
-            if (fromStation === '' || toStation === '' || travelDate === '') {
-                event.preventDefault(); // Отменяем отправку формы
-                alert("Пожалуйста, заполните все поля!"); // Сообщение для пользователя
-            }
-        });
+    $('#from_station').autocomplete({
+        source: '{% url "station_autocomplete" %}',
+        minLength: 2
     });
+
+    $('#to_station').autocomplete({
+        source: '{% url "station_autocomplete" %}',
+        minLength: 2
+    });
+
+    $('#calendar-addon').click(function() {
+        $('#travel_date').click();
+    });
+
+    // Проверка формы перед отправкой
+    $('#search-form').on('submit', function(event) {
+        // Получаем значения полей
+        var fromStation = $('#from_station').val().trim();
+        var toStation = $('#to_station').val().trim();
+        var travelDate = $('#travel_date').val().trim();
+
+        // Проверяем, заполнены ли все поля
+        if (fromStation === '' || toStation === '' || travelDate === '') {
+            event.preventDefault(); // Отменяем отправку формы
+            alert("Пожалуйста, заполните все поля!"); // Сообщение для пользователя
+        }
+    });
+});
+
 </script>
 
 {% endblock %}

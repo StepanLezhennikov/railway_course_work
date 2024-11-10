@@ -1,73 +1,144 @@
 {% extends 'base.html' %}
+{% load custom_filters_route %}
 {% load static %}
 
 {% block title %}
 <head>
     <meta charset="UTF-8">
     <title>Профиль пользователя</title>
-    <link rel="stylesheet" href="{% static 'css/profile.css' %}"> <!-- Подключите свой CSS файл -->
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
 {% endblock %}
 
 {% block content %}
-<div class="profile-container">
-    <h1>Добро пожаловать, {{ user.username }}!</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Добро пожаловать, {{ user.username }}!</h1>
 
-    <div class="user-info">
-        <h2>Информация о пользователе</h2>
-        <p><strong>Имя:</strong> {{ user.username }}</p>
-        <p><strong>Электронная почта:</strong> {{ user.email }}</p>
-        {% if user.phone_number %}
-            <p><strong>Телефон:</strong> {{ user.phone_number }}</p>
-        {% else %}
-            <p><strong>Телефон:</strong> <em>Не указан</em></p>
-            <form method="POST">
-                {% csrf_token %}
-                <label for="phone_number">Добавить номер телефона:</label>
-                <input type="text" id="phone_number" name="phone_number" required>
-                <button type="submit">Сохранить</button>
-            </form>
-        {% endif %}
-    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Информация о пользователе</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Имя:</strong> {{ user.username }}</p>
+                    <p><strong>Электронная почта:</strong> {{ user.email }}</p>
+                    {% if user.phone_number %}
+                        <p><strong>Телефон:</strong> {{ user.phone_number }}</p>
+                    {% else %}
+                        <p><strong>Телефон:</strong> <em>Не указан</em></p>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <label for="phone_number">Добавить номер телефона:</label>
+                            <div class="input-group mt-2">
+                                <input type="text" id="phone_number" name="phone_number" class="form-control" required>
+                                <button type="submit" class="btn btn-primary save-button">Сохранить</button>
+                            </div>
 
-    <div class="orders">
-        <h2>Ваши заказы</h2>
-        {% if orders %}
-            <ul>
-                {% for order in orders %}
-                    <li>Заказ #{{ order.route}}: {{ order.date }} - {{ order.status }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>У вас нет заказов.</p>
-        {% endif %}
-    </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-    <div class="discount-cards">
-        <h2>Ваши скидочные карты</h2>
-        {% if discount_cards %}
-            <ul>
-                {% for card in discount_cards %}
-                    <li>Карта #{{ card.id }}: {{ card.discount }}% - {{ card.valid_until }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>У вас нет скидочных карт.</p>
-        {% endif %}
-    </div>
-    <div class="passengers">
-        <h2>Ваши пассажиры</h2>
-        {% if passengers %}
-            <ul>
-                {% for passenger in passengers %}
-                    <li>{{ passenger }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>У вас нет добавленных пассажиров.</p>
-        {% endif %}
+        <!-- Orders -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Ваши заказы</h4>
+                </div>
+                <div class="card-body">
+                    {% if orders %}
+                        <ul class="list-group list-group-flush">
+                            {% for order in orders %}
+                                <li class="list-group-item">
+                                    <strong>{{ order.route.from_station.name }} - {{ order.route.to_station.name }}:</strong><br>
+                                    {{ order.route.departure_time|date:"H:i" }} - {{ order.route.arrival_time|date:"H:i, Y.m.d" }}<br>
+                                    <small>Время в пути: {{ order.route.departure_time|duration:order.route.arrival_time }}</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>У вас нет заказов.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Discount Cards -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Ваши скидочные карты</h4>
+                </div>
+                <div class="card-body">
+                    {% if discount_cards %}
+                        <ul class="list-group list-group-flush">
+                            {% for card in discount_cards %}
+                                <li class="list-group-item">
+                                    Карта #{{ card.id }}: {{ card.discount }}%<br>
+                                    Действительна до: {{ card.valid_until|date:"d.m.Y" }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>У вас нет скидочных карт.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Passengers -->
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Ваши пассажиры</h4>
+                </div>
+                <div class="card-body">
+                    {% if passengers %}
+                        <ul class="list-group list-group-flush">
+                            {% for passenger in passengers %}
+                                <li class="list-group-item">{{ passenger }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>У вас нет добавленных пассажиров.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<style>
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .input-group .form-control,
+    .input-group .save-button {
+        height: 40px;
+        border-radius: 0;
+    }
+
+    .input-group .form-control {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        margin-bottom: 10px;
+    }
+
+    .input-group .save-button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        width: auto;
+        padding-left: 15px;
+        padding-right: 15px;
+        margin-top: 0px;
+    }
+</style>
+
+
 {% endblock %}
-{% block footer%}
+{% block footer %}
 {% endblock %}
