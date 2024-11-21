@@ -1,15 +1,12 @@
 from datetime import datetime
 from typing import List
 from django.contrib import messages
-from .tasks import send_ticket_email
+
+from .tasks import send_ticket_email, send_sms
 from django.db import transaction
 from django.shortcuts import render, redirect
-from django.core.mail import send_mail
-from django.conf import settings
 from order.models import Order
 from route.models import Route
-from route.views import search
-from train.models import Train
 
 
 def finish_order(request):
@@ -18,10 +15,10 @@ def finish_order(request):
         route_id = request.session['route_id']
         route = Route.objects.prefetch_related('train__cars__seats').get(pk=route_id)
 
-        selected_passengers_ids = [selected_id for selected_id in
-                                   request.user.passengers.all().values_list('id', flat=True)
-                                   if request.POST.get(f"selected_passengers_{selected_id}")]
+        selected_passengers_ids = request.session['selected_passengers_ids']
 
+        selected_card_id = request.POST.get('selected_card')
+        selected_card = request.user.discounts.select_related('type').get(pk=selected_card_id)
 
         if len(selected_seats) != len(selected_passengers_ids):
             messages.error(request, "Количество пассажиров и мест не совпало")
@@ -29,11 +26,19 @@ def finish_order(request):
 
         seat_map = {(car.number, seat.number): seat for car in route.train.cars.all() for seat in car.seats.all()}
 
-        with transaction.atomic():
+        with (transaction.atomic()):
             orders = []
             for passenger_id, seat_data in zip(selected_passengers_ids, selected_seats):
                 seat_number, wagon_number = seat_data.values()
                 seat = seat_map.get((int(wagon_number), int(seat_number)))
+
+
+                price = route.starting_price - route.starting_price * selected_card.type.discount if selected_card.amount_of_rides > 0 else route.starting_price
+                selected_card.amount_of_rides -=1
+                if selected_card.amount_of_rides > 0:
+                    selected_card.save()
+                else:
+                    selected_card.delete()
 
                 if seat :
                     seat.is_occupied = True
@@ -43,7 +48,7 @@ def finish_order(request):
                         passenger_id=passenger_id,
                         route=route,
                         seat=seat,
-                        price=route.starting_price,
+                        price=price,
                         is_active=False
                     ))
 
@@ -96,5 +101,9 @@ def buy_tickets(request):
             """
 
         send_ticket_email.delay(request.user.email, order_info)
+        if request.user.phone_number:
+            send_sms.delay(to_phone=request.user.phone_number, info=order_info)
+
+
     orders.update(is_active=True)
     return redirect('home')

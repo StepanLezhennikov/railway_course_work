@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load custom_filters_route %}
+{% load custom_filters_discount %}
 {% load static %}
 
 {% block title %}
@@ -53,9 +54,9 @@
                         <ul class="list-group list-group-flush">
                             {% for order in orders %}
                                 <li class="list-group-item">
-                                    <strong>{{ order.route.from_station.name }} - {{ order.route.to_station.name }}:</strong><br>
-                                    {{ order.route.departure_time|date:"H:i" }} - {{ order.route.arrival_time|date:"H:i, Y.m.d" }}<br>
-                                    <small>Время в пути: {{ order.route.departure_time|duration:order.route.arrival_time }}</small>
+                                    <strong>{{ order.from_station_name }} - {{ order.to_station_name }}:</strong><br>
+                                    {{ order.departure_time|date:"H:i" }} - {{ order.arrival_time|date:"H:i, Y.m.d" }}<br>
+                                    <small>Время в пути: {{ order.departure_time|duration:order.arrival_time }}</small>
                                 </li>
                             {% endfor %}
                         </ul>
@@ -77,8 +78,12 @@
                         <ul class="list-group list-group-flush">
                             {% for card in discount_cards %}
                                 <li class="list-group-item">
-                                    Карта #{{ card.id }}: {{ card.discount }}%<br>
-                                    Действительна до: {{ card.valid_until|date:"d.m.Y" }}
+                                    <h5 class="card-title">{{ card.type.name }}</h5>
+                                    <div>
+                                        <strong>Скидка:</strong> {{ card.type.discount|multiply_by_100 }}%<br>
+                                        <strong>Действительна до:</strong> {{ card.end_date|date:"d.m.Y" }}<br>
+                                        <strong>Осталось поездок:</strong> {{ card.amount_of_rides }}
+                                    </div>
                                 </li>
                             {% endfor %}
                         </ul>
@@ -115,6 +120,7 @@
         font-size: 1.2rem;
         font-weight: 600;
     }
+
 
     .input-group .form-control,
     .input-group .save-button {

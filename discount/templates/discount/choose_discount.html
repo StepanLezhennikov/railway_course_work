@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters_discount %}
+
+{% block title %}
+<title>Выбор скидочной карты</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Ваши скидочные карты</h4>
+                </div>
+                <div class="card-body">
+                    {% if user_cards %}
+                        <form method="post" action="{% url 'finish_order' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                {% for card in user_cards %}
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card h-100 shadow-sm">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-center">{{ card.type.name }}</h5>
+                                                <p><strong>Скидка:</strong> {{ card.type.discount|multiply_by_100 }}%</p>
+                                                <p><strong>Действительна до:</strong> {{ card.end_date|date:"d.m.Y" }}</p>
+                                                <p><strong>Осталось поездок:</strong> {{ card.amount_of_rides }}</p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="selected_card" id="card_{{ card.id }}" value="{{ card.id }}">
+                                                    <label class="form-check-label" for="card_{{ card.id }}">
+                                                        Выбрать
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mt-3">Перейти к оплате</button>
+                        </form>
+                    {% else %}
+                        <p>У вас нет добавленных скидочных карт.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

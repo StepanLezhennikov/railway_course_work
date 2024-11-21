@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
     <title>Добавление пассажиров</title>
     <link rel="stylesheet" href="{% static 'css/passengers_add.css' %}">
-    <script src="{% static 'js/passengers_add.js' %}"></script>
 </head>
 {% endblock %}
 
@@ -52,7 +51,7 @@
 {% endif %}
 
     <h3>Ваши пассажиры</h3>
-    <form action="{% url 'finish_order' %}" method="POST">
+    <form action="{% url 'choose_discounts' %}" method="POST">
         {% csrf_token %}
         <div class="list-group">
             {% for passenger in user.passengers.all %}
@@ -79,11 +78,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('errorModal');
     if (modal) {
-        modal.style.display = "block"; // Открываем окно, если оно существует
+        modal.style.display = "block";
 
-        // Закрываем окно при клике за его пределами
         window.onclick = function(event) {
-            if (event.target == modal) {
+            if (event.target === modal) {
                 modal.style.display = "none";
             }
         }

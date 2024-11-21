@@ -9,8 +9,9 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +27,7 @@ SECRET_KEY = 'django-insecure-w^d^a-p0k#vpd4j^fw62ydbp42-ns(*l9=6+tl8x69_k-j=c&+
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
 
 
 # Application definition
@@ -83,14 +85,7 @@ WSGI_APPLICATION = 'railway.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',  # Имя базы данных
-        'USER': 'postgres',  # Имя пользователя
-        'PASSWORD': 'postgres',  # Пароль пользователя
-        'HOST': 'localhost',  # Адрес сервера
-        'PORT': '5432',  # Порт сервера PostgreSQL
-    }
+    'default': dj_database_url.config(default='postgres://postgres:postgres@db:5432/postgres')
 }
 
 
@@ -125,6 +120,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -133,6 +130,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
@@ -147,10 +147,17 @@ EMAIL_HOST_PASSWORD = 'bfni vove scwq tbma'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+
+TWILIO_ACCOUNT_SID = 'ACb0f5266504f426ba87feb2278894426e'
+TWILIO_AUTH_TOKEN = '925864bbd09b8540082e199ce0713dfc'
+TWILIO_PHONE_NUMBER = '+12562903523'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# sudo service redis - server start
+# celery -A railway worker --loglevel=info

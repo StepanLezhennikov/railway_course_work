@@ -1,10 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Информация о пассажирах</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Пассажиры</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Ваши пассажиры</h4>
+            </div>
+            <div class="card-body">
+                {% if passengers %}
+                    <ul class="list-group list-group-flush">
+                        {% for passenger in passengers %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="passenger-name" data-bs-toggle="modal" data-bs-target="#passengerModal{{ passenger.id }}">
+                                    {{ passenger.first_name }} {{ passenger.second_name }}
+                                </span>
+                                <a href="{% url 'delete_passenger' passenger.id %}" class="btn btn-danger btn-sm">Удалить</a>
+                            </li>
+
+                            <!-- Модальное окно для пассажира -->
+                            <div class="modal fade" id="passengerModal{{ passenger.id }}" tabindex="-1" aria-labelledby="passengerModalLabel{{ passenger.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="passengerModalLabel{{ passenger.id }}">Информация о пассажире</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p><strong>Имя:</strong> {{ passenger.first_name }}</p>
+                                            <p><strong>Фамилия:</strong> {{ passenger.second_name }}</p>
+                                            <p><strong>Отчество:</strong> {{ passenger.fathername }}</p>
+                                            <p><strong>Номер паспорта:</strong> {{ passenger.passport_number }}</p>
+                                            <p><strong>Является ребенком:</strong> {{ passenger.is_child|yesno:"Да,Нет" }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>У вас нет добавленных пассажиров.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mt-4">Добавление пассажиров</h2>
+    <form action="{% url 'passenger_create' %}" method="POST" class="mb-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="first_name" class="form-label">Имя</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="second_name" class="form-label">Фамилия</label>
+            <input type="text" class="form-control" id="second_name" name="second_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="fathername" class="form-label">Отчество</label>
+            <input type="text" class="form-control" id="fathername" name="fathername">
+        </div>
+        <div class="mb-3">
+            <label for="passport_number" class="form-label">Номер паспорта</label>
+            <input type="text" class="form-control" id="passport_number" name="passport_number" required>
+        </div>
+        <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="is_child" name="is_child">
+            <label class="form-check-label" for="is_child">Является ребенком</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить пассажира</button>
+        <input type="hidden" id="selected-seats-data" name="selected_seats">
+    </form>
+
+    {% if messages %}
+        <div id="errorModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Подключение Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
