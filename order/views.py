@@ -3,7 +3,7 @@ from typing import List
 from django.contrib import messages
 
 from .tasks import send_ticket_email, send_sms
-from django.db import transaction
+from django.db import transaction, connection
 from django.shortcuts import render, redirect
 from order.models import Order
 from route.models import Route
@@ -18,7 +18,7 @@ def finish_order(request):
         selected_passengers_ids = request.session['selected_passengers_ids']
 
         selected_card_id = request.POST.get('selected_card')
-        selected_card = request.user.discounts.select_related('type').get(pk=selected_card_id)
+        selected_card = request.user.discounts.select_related('type').filter(pk=selected_card_id).first()
 
         if len(selected_seats) != len(selected_passengers_ids):
             messages.error(request, "Количество пассажиров и мест не совпало")
@@ -32,13 +32,17 @@ def finish_order(request):
                 seat_number, wagon_number = seat_data.values()
                 seat = seat_map.get((int(wagon_number), int(seat_number)))
 
+                try:
+                    price = route.starting_price - route.starting_price * selected_card.type.discount
+                    selected_card.amount_of_rides -= 1
+                    if selected_card.amount_of_rides > 0:
+                        selected_card.save()
+                    else:
+                        selected_card.delete()
+                except:
+                    price = route.starting_price
 
-                price = route.starting_price - route.starting_price * selected_card.type.discount if selected_card.amount_of_rides > 0 else route.starting_price
-                selected_card.amount_of_rides -=1
-                if selected_card.amount_of_rides > 0:
-                    selected_card.save()
-                else:
-                    selected_card.delete()
+
 
                 if seat :
                     seat.is_occupied = True
